@@ -1,0 +1,17 @@
+<p>Spectrum data</p>
+<ul>
+    <li>FFT: {{spectrum.fftSize}}</li>
+    <li>El:  {{spectrum.elapsedMs}} ms</li>
+    <li>TS:  {{getFormattedDate()}}</li>
+    <li>CF:  {{spectrum.centerFrequency}} Hz</li>
+    <li>BW:  {{spectrum.bandwidth}} Hz</li>
+    <li>Lin: {{spectrum.linear}} SSB: {{spectrum.ssb}} USB: {{spectrum.usb}}</li>
+</ul>
+<div>
+    <div style="z-index:0;position:absolute">
+        <canvas #cspectrum class="cspectrum" width="1024" height="512"></canvas>
+    </div>
+    <div style="z-index:1;position:absolute">
+        <canvas #cscale class="cscale" width="1024" height="512"></canvas>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+.cspectrum {
+    border-style: solid;
+    z-index: 0;
+}
+
+.cscale {
+    border-style: solid;
+    z-index: 1;
+}
