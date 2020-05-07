@@ -1,17 +1,84 @@
-<p>Spectrum data</p>
-<ul>
-    <li>FFT: {{spectrum.fftSize}}</li>
-    <li>El:  {{spectrum.elapsedMs}} ms</li>
-    <li>TS:  {{getFormattedDate()}}</li>
-    <li>CF:  {{spectrum.centerFrequency}} Hz</li>
-    <li>BW:  {{spectrum.bandwidth}} Hz</li>
-    <li>Lin: {{spectrum.linear}} SSB: {{spectrum.ssb}} USB: {{spectrum.usb}}</li>
-</ul>
 <div>
-    <div style="z-index:0;position:absolute">
-        <canvas #cspectrum class="cspectrum" width="1024" height="512"></canvas>
+    <span>
+        <table>
+            <tr>
+                <td>
+                    Ref
+                    <input type="number" class="power-input"
+                      [(ngModel)]="refLevel"
+                      (change)="onPowerScaleChanged()"
+                      min=-100 max=0 step=1
+                    >
+                    dB
+                </td>
+                <td>
+                    Range
+                    <input type="number" class="power-input"
+                      [(ngModel)]="powerRange"
+                      (change)="onPowerScaleChanged()"
+                      min=5 max=100 step=1
+                    >
+                    dB
+                </td>
+                <td>
+                    FFT {{spectrum.fftSize}}
+                </td>
+                <td>
+                    CF {{spectrum.centerFrequency}} Hz
+                </td>
+                <td>
+                    {{getLinLog()}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan=2>
+                    TS {{getFormattedDate()}}
+                </td>
+                <td>
+                    DT {{spectrum.elapsedMs}} ms
+                </td>
+                <td>
+                    BW {{spectrum.bandwidth}} Hz
+                </td>
+                <td>
+                    {{getSpectrumDirection()}}
+                </td>
+            </tr>
+        </table>
+    </span>
+    <div style="position:relative">
+        <canvas #cspectrum class="cspectrum"
+            width={{getSpectrumWidth()}}
+            height="{{getSpectrumHeight()}}"
+            [style.left.px]="getSpectrumLeft()"
+        ></canvas>
+        <canvas #cspectrumGrid class="cspectrumGrid"
+            width={{getSpectrumWidth()}}
+            height="{{getSpectrumHeight()}}"
+            [style.left.px]="getSpectrumLeft()"
+        ></canvas>
+        <canvas #cfreqScale class="cfreqScale"
+            width={{getSpectrumWidth()}}
+            height="18px"
+            [style.top.px]="getSpectrumHeight()"
+            [style.left.px]="getSpectrumLeft()"
+        ></canvas>
+        <canvas #cfreqUnits class="cfreqUnits"
+            width={{getPowScaleWidth()}}
+            height="18px"
+            [style.top.px]="getSpectrumHeight()"
+        ></canvas>
+        <canvas #cpowScale class="cpowScale"
+            width="{{getPowScaleWidth()}}"
+            height="{{getSpectrumHeight()}}"
+        ></canvas>
+        <canvas width={{width}} height="{{(width/4)+18}}"></canvas>
     </div>
-    <div style="z-index:1;position:absolute">
-        <canvas #cscale class="cscale" width="1024" height="512"></canvas>
+    <div>
+    </div>
+    <div>
+        Koko
     </div>
 </div>
+
+

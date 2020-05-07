@@ -1,9 +1,32 @@
-.cspectrum {
-    border-style: solid;
-    z-index: 0;
+.power-input {
+    width: 6ch;
+    margin: 1px;
+    position: relative;
+    bottom: 2px;
 }
 
-.cscale {
-    border-style: solid;
+.cspectrum {
+    z-index: 0;
+    position: absolute;
+}
+
+.cspectrumGrid {
     z-index: 1;
+    position: absolute;
+}
+
+.cfreqScale {
+    position: absolute;
+}
+
+.cfreqUnits {
+    position: absolute;
+}
+
+.cpowScale {
+    position: absolute;
+}
+
+td {
+    background-color: rgb(230, 230, 210);
 }
