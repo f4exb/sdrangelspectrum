@@ -397,22 +397,22 @@ export class WsspectrumComponent implements OnInit {
     const ctx = this.ctxWaterfall;
     const h = this.cwaterfall.nativeElement.height;
     const w = this.cwaterfall.nativeElement.width;
-    const wx = w / fftSize;
+    const wx = fftSize / w;
 
     // ctx.fillStyle = 'rgba(255,248,180,1.0)';
     // ctx.fillRect(0, 0, this.cwaterfall.nativeElement.width, this.cwaterfall.nativeElement.height);
     const image = ctx.getImageData(0, 0, w, h - 1);
     ctx.putImageData(image, 0, 1);
-    const imgdata = ctx.getImageData(0, 0, this.cwaterfall.nativeElement.width, 1);
+    const imgdata = ctx.getImageData(0, 0, w, 1);
 
-    for (let bin = 0; bin < fftSize; bin++) {
-        const xPos = Math.floor(bin * wx);
-        let pow: number = (refLevel - series[bin]) / powerRange; // 0.0 -> 1.0 range high to low
-        pow = (pow < 0.0) ? 0.0 : (pow > 1.0) ? 1.0 : pow;
-        imgdata.data[4 * xPos] = this.powToRed(pow);
-        imgdata.data[4 * xPos + 1] = this.powToGreen(pow);
-        imgdata.data[4 * xPos + 2] = this.powToBlue(pow);
-        imgdata.data[4 * xPos + 3] = 255;
+    for (let xPos = 0; xPos < w; xPos++) {
+      const bin = Math.floor(xPos * wx);
+      let pow: number = (refLevel - series[bin]) / powerRange; // 0.0 -> 1.0 range high to low
+      pow = (pow < 0.0) ? 0.0 : (pow > 1.0) ? 1.0 : pow;
+      imgdata.data[4 * xPos] = this.powToRed(pow);
+      imgdata.data[4 * xPos + 1] = this.powToGreen(pow);
+      imgdata.data[4 * xPos + 2] = this.powToBlue(pow);
+      imgdata.data[4 * xPos + 3] = 255;
     }
 
     ctx.putImageData(imgdata, 0, 0);
