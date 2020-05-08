@@ -24,24 +24,22 @@
                     FFT {{spectrum.fftSize}}
                 </td>
                 <td>
-                    CF {{spectrum.centerFrequency}} Hz
-                </td>
-                <td>
                     {{getLinLog()}}
                 </td>
-            </tr>
-            <tr>
-                <td colspan=2>
-                    TS {{getFormattedDate()}}
+                <td>
+                    {{getSpectrumDirection()}}
                 </td>
                 <td>
-                    DT {{spectrum.elapsedMs}} ms
+                    CF {{spectrum.centerFrequency}} Hz
                 </td>
                 <td>
                     BW {{spectrum.bandwidth}} Hz
                 </td>
                 <td>
-                    {{getSpectrumDirection()}}
+                    TS {{getFormattedDate()}}
+                </td>
+                <td>
+                    DT {{spectrum.elapsedMs}} ms
                 </td>
             </tr>
         </table>
