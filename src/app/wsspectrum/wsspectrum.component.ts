@@ -20,6 +20,7 @@ export class WsspectrumComponent implements OnInit {
   POW_WIDTH = 60; // width in pixels of power scale
   FREQ_TICK_SPACE = 80;
   POWER_TICK_SPACE = 20;
+  TIME_TICK_SPACE = 30;
   refLevelDb = -40.0;
   refLevelLin = 1e-4;
   powerRangeDb = 60.0;
@@ -28,6 +29,8 @@ export class WsspectrumComponent implements OnInit {
   powerTicks: Tick[] = [];
   timeTicks: Tick[] = [];
   initPowerScale: boolean;
+  fftTimes: number[] = [];
+  fftTimeIndex = 0;
 
   @ViewChild('cspectrum', { static: true })
   cspectrum: ElementRef<HTMLCanvasElement>;
@@ -57,18 +60,20 @@ export class WsspectrumComponent implements OnInit {
 
   constructor(private wsService: WebsocketService) {
       wsService.connect('ws://192.168.0.24:8887').subscribe(spectrum => {
+        this.pushFFTTime(Number(spectrum.elapsedMs));
+        this.timeTicks = this.getTimeTicks();
         if ((spectrum.centerFrequency !== this.spectrum.centerFrequency) || (spectrum.bandwidth !== this.spectrum.bandwidth)) {
           this.frequencyTicks = this.getFrequencyTicks(this.getSpectrumWidth(), spectrum.centerFrequency, spectrum.bandwidth);
           this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
           this.drawFreqScale(this.frequencyTicks);
           this.drawFreqUnits(spectrum.centerFrequency);
-          this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
         }
         if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
-          this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
-          this.drawPowScale(this.powerTicks);
-          this.initPowerScale = false;
+            this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
+            this.drawPowScale(this.powerTicks);
+            this.initPowerScale = false;
         }
+        this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
         this.drawSpectrum(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
         this.drawWaterfall(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
         this.drawTimeScale(this.timeTicks);
@@ -87,7 +92,6 @@ export class WsspectrumComponent implements OnInit {
     this.ctxWaterfallGrid = this.cwaterfallGrid.nativeElement.getContext('2d');
     this.ctxTimeScale = this.ctimeScale.nativeElement.getContext('2d');
     this.initPowerScale = true;
-    this.timeTicks = this.getTimeTicks(this.getSpectrumHeight());
   }
 
   getSpectrumHeight() {
@@ -323,6 +327,17 @@ export class WsspectrumComponent implements OnInit {
     // Clear scale
     ctx.fillStyle = 'rgba(245, 245, 225, 1.0)';
     ctx.fillRect(0, 0, w, h);
+
+    // Redraw time scale
+    ctx.font = '13px Courier';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'black';
+
+    ticks.forEach(tick => {
+      let label: string;
+      label = (tick.value / 1000).toFixed(1);
+      ctx.fillText(label, this.getPowScaleWidth() - 2, tick.axisValue);
+    });
   }
 
   drawSpectrum(fftSize: number, series: Float32Array, linear: boolean) {
@@ -415,7 +430,7 @@ export class WsspectrumComponent implements OnInit {
     return 180 * pow;
   }
 
-onPowerScaleChanged() {
+  onPowerScaleChanged() {
     this.refLevelLin = Math.pow(10, this.refLevelDb / 10);
     this.powerRangeLin = this.refLevelLin;
     this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
@@ -504,12 +519,43 @@ onPowerScaleChanged() {
     }
   }
 
-  getTimeTicks(axisSpan: number): Tick[] {
+  getTimeTicks(): Tick[] {
     const ticks: Tick[] = [];
-    ticks.push({
-      axisValue: Math.floor(axisSpan / 10),
-      value: 0
-    });
+    let timeCounter = 0;
+    for (let i = 0; i < this.fftTimes.length; i++) {
+      timeCounter += this.getFFTTime(i);
+      if ((i !== 0) && (i % this.TIME_TICK_SPACE === 0) && (i < this.getSpectrumHeight())) {
+        ticks.push({
+            axisValue: i,
+            value: timeCounter
+        });
+      }
+    }
     return ticks;
+  }
+
+  private pushFFTTime(fftTime: number): void {
+      if (this.fftTimes.length < this.getSpectrumHeight()) {
+        this.fftTimes.push(fftTime);
+        this.fftTimeIndex = this.fftTimes.length - 1;
+      } else {
+        if (this.fftTimeIndex < this.getSpectrumHeight() - 1) {
+          this.fftTimeIndex++;
+        } else {
+            this.fftTimeIndex = 0;
+        }
+        this.fftTimes[this.fftTimeIndex] = fftTime;
+      }
+  }
+
+  private getFFTTime(index: number): number {
+    if (index < this.fftTimes.length) {
+      if (this.fftTimeIndex < index) {
+        return this.fftTimes[this.getSpectrumHeight() - (index - this.fftTimeIndex)];
+      } else {
+        return this.fftTimes[this.fftTimeIndex - index];
+      }
+    }
+    return 0;
   }
 }
