@@ -17,11 +17,13 @@ export class WsspectrumComponent implements OnInit {
   @Input('width') width: number;
   spectrum: Spectrum = SPECTRUM_DEFAULT;
   NMARKERS = 4;   // number of markers either side of centre
-  POW_WIDTH = 40; // width in pixels of power scale
+  POW_WIDTH = 60; // width in pixels of power scale
   FREQ_TICK_SPACE = 80;
-  POWER_TICK_SPACE = 25;
-  refLevel = -40.0;
-  powerRange = 60.0;
+  POWER_TICK_SPACE = 20;
+  refLevelDb = -40.0;
+  refLevelLin = 1e-4;
+  powerRangeDb = 60.0;
+  powerRangeLin = 1e-4;
   frequencyTicks: Tick[] = [];
   powerTicks: Tick[] = [];
   initPowerScale: boolean;
@@ -50,11 +52,12 @@ export class WsspectrumComponent implements OnInit {
           this.drawFreqScale(this.frequencyTicks);
           this.drawFreqUnits(spectrum.centerFrequency);
         }
-        if (this.initPowerScale) {
+        if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
+          this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
           this.drawPowScale(this.powerTicks);
           this.initPowerScale = false;
         }
-        this.drawSpectrum(spectrum.fftSize, spectrum.spectrum);
+        this.drawSpectrum(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
         this.spectrum = spectrum;
       });
     }
@@ -65,7 +68,7 @@ export class WsspectrumComponent implements OnInit {
     this.ctxFreqScale = this.cfreqScale.nativeElement.getContext('2d');
     this.ctxFreqUnits = this.cfreqUnits.nativeElement.getContext('2d');
     this.ctxPowScale = this.cpowScale.nativeElement.getContext('2d');
-    this.powerTicks = this.getPowerTicks(this.getSpectrumHeight(), this.refLevel, this.powerRange);
+    this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
     this.initPowerScale = true;
   }
 
@@ -256,9 +259,20 @@ export class WsspectrumComponent implements OnInit {
     });
   }
 
-  drawSpectrum(fftSize: number, series: Float32Array) {
+  drawSpectrum(fftSize: number, series: Float32Array, linear: boolean) {
     if (this.cspectrum == null) {
       return;
+    }
+
+    let refLevel: number;
+    let powerRange: number;
+
+    if (linear) {
+        refLevel = this.refLevelLin;
+        powerRange = this.powerRangeLin;
+    } else {
+        refLevel = this.refLevelDb;
+        powerRange = this.powerRangeDb;
     }
 
     const ctx = this.ctxSpectrum;
@@ -269,7 +283,7 @@ export class WsspectrumComponent implements OnInit {
 
     for (let bin = 0; bin < fftSize; bin++) {
       const xPos = Math.floor(bin * w);
-      let pow: number = (this.refLevel - series[bin]) / this.powerRange;
+      let pow: number = (refLevel - series[bin]) / powerRange;
       pow = (pow < 0.0) ? 0.0 : (pow > 1.0) ? 1.0 : pow;
       const yPos = Math.floor(this.cspectrum.nativeElement.height * pow);
       if (bin === 0) {
@@ -284,7 +298,9 @@ export class WsspectrumComponent implements OnInit {
   }
 
   onPowerScaleChanged() {
-    this.powerTicks = this.getPowerTicks(this.getSpectrumHeight(), this.refLevel, this.powerRange);
+    this.refLevelLin = Math.pow(10, this.refLevelDb / 10);
+    this.powerRangeLin = this.refLevelLin;
+    this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
     this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
     this.drawPowScale(this.powerTicks);
   }
@@ -317,10 +333,18 @@ export class WsspectrumComponent implements OnInit {
     }
   }
 
-  getPowerTicks(axisSpan: number, refLevel: number, powerRange: number) {
+  getPowerTicks(axisSpan: number): Tick[] {
+    let refLevel: number;
+    let powerRange: number;
+
     if (this.spectrum.linear) {
-      powerRange = refLevel;
+      refLevel = this.refLevelLin;
+      powerRange = this.powerRangeLin;
+    } else {
+      refLevel = this.refLevelDb;
+      powerRange = this.powerRangeDb;
     }
+
     const nbTicks = Math.floor(axisSpan / this.POWER_TICK_SPACE); // optimal number of ticks
     const powerStep = this.getPowerStep(powerRange / nbTicks);
     const powerDensity = axisSpan / powerRange;
@@ -338,13 +362,27 @@ export class WsspectrumComponent implements OnInit {
   }
 
   getPowerStep(rawStep: number): number {
-    const s = Math.pow(10, Math.floor(Math.log10(rawStep)));
-    if (rawStep < 2 * s) {
+    const p = Math.floor(Math.log10(rawStep));
+    const s = Math.pow(10, p);
+    const d = Math.floor(rawStep / s);
+    if (this.spectrum.linear) {
+      if (d < 2) {
         return 2 * s;
-    } else if (rawStep < 5 * s) {
+      } else if (d < 4) {
+        return 4 * s;
+      } else if (d < 6) {
         return 5 * s;
-    } else {
+      } else {
         return 10 * s;
+      }
+    } else {
+      if (rawStep < 2 * s) {
+        return 2 * s;
+      } else if (rawStep < 5 * s) {
+        return 5 * s;
+      } else {
+        return 10 * s;
+      }
     }
   }
 }
