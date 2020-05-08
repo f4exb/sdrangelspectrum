@@ -75,12 +75,21 @@ export class WsspectrumComponent implements OnInit {
   private processSpectrum(spectrum: Spectrum): void {
     this.pushFFTTime(Number(spectrum.elapsedMs));
     this.timeTicks = this.getTimeTicks();
-    if ((spectrum.centerFrequency !== this.spectrum.centerFrequency) || (spectrum.bandwidth !== this.spectrum.bandwidth)) {
-      this.frequencyTicks = this.getFrequencyTicks(this.getSpectrumWidth(), spectrum.centerFrequency, spectrum.bandwidth);
+    if ((spectrum.centerFrequency !== this.spectrum.centerFrequency)
+    || (spectrum.bandwidth !== this.spectrum.bandwidth)
+    || (spectrum.ssb !== this.spectrum.ssb)
+    || (spectrum.usb !== this.spectrum.usb)) {
+      this.frequencyTicks = this.getFrequencyTicks(
+          this.getSpectrumWidth(),
+          spectrum.centerFrequency,
+          spectrum.bandwidth,
+          spectrum.ssb,
+          spectrum.usb);
       this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
       this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
       this.drawFreqScale(this.frequencyTicks);
-      this.drawFreqUnits(spectrum.centerFrequency);
+      const centerFrequency: bigint = spectrum.ssb ? spectrum.centerFrequency + BigInt(spectrum.bandwidth) : spectrum.centerFrequency;
+      this.drawFreqUnits(centerFrequency);
     }
     if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
       this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
@@ -178,7 +187,7 @@ export class WsspectrumComponent implements OnInit {
     const h = this.cspectrumGrid.nativeElement.height;
 
     // Clear grid canvas
-    ctx.fillStyle = 'rgba(0,0,0,1.0)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
     ctx.globalCompositeOperation = 'destination-out'; // clear foreground
     ctx.fillRect(0, 0, w, h);
     ctx.globalCompositeOperation = 'source-over';
@@ -189,7 +198,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(tick.axisValue, 0);
       ctx.lineTo(tick.axisValue, h);
     });
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
     ctx.stroke();
 
     // Redraw power grrid
@@ -198,7 +207,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(0, tick.axisValue);
       ctx.lineTo(w, tick.axisValue);
     });
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
     ctx.stroke();
   }
 
@@ -212,7 +221,7 @@ export class WsspectrumComponent implements OnInit {
     const h = this.cwaterfallGrid.nativeElement.height;
 
     // Clear grid canvas
-    ctx.fillStyle = 'rgba(0,0,0,1.0)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
     ctx.globalCompositeOperation = 'destination-out'; // clear foreground
     ctx.fillRect(0, 0, w, h);
     ctx.globalCompositeOperation = 'source-over';
@@ -223,7 +232,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(tick.axisValue, 0);
       ctx.lineTo(tick.axisValue, h);
     });
-    ctx.strokeStyle = 'rgba(128,255,255,0.75)';
+    ctx.strokeStyle = 'rgba(180, 188, 255, 0.75)';
     ctx.stroke();
 
     // Redraw time grid
@@ -232,7 +241,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(0, tick.axisValue);
       ctx.lineTo(w, tick.axisValue);
     });
-    ctx.strokeStyle = 'rgba(128,255,255,0.75)';
+    ctx.strokeStyle = 'rgba(192, 192, 255, 0.75)';
     ctx.stroke();
   }
 
@@ -253,8 +262,12 @@ export class WsspectrumComponent implements OnInit {
     ctx.font = '13px Courier';
     ctx.textAlign = 'center';
     ctx.fillStyle = 'black';
+    let scaleFactor = 1;
+    if (ticks.length >= 0) {
+      scaleFactor = this.getFrquencyScale(ticks[ticks.length - 1].value);
+    }
     ticks.forEach(tick => {
-      const label = (this.scaleFrquency(tick.value)).toFixed(3).toString();
+      const label = (tick.value / scaleFactor).toFixed(3).toString();
       ctx.fillText(label, tick.axisValue, h - 4);
     });
   }
@@ -268,7 +281,7 @@ export class WsspectrumComponent implements OnInit {
     const w = this.cfreqUnits.nativeElement.width;
     const h = this.cfreqUnits.nativeElement.height;
 
-    ctx.fillStyle = 'rgba(225, 225, 205,1.0)';
+    ctx.fillStyle = 'rgba(225, 225, 205, 1.0)';
     ctx.fillRect(0, 0, w, h);
 
     // Redraw units
@@ -289,17 +302,17 @@ export class WsspectrumComponent implements OnInit {
     }
   }
 
-  scaleFrquency(freq: number) {
+  getFrquencyScale(freq: number): number {
     if (freq < 1000) {
-      return freq;
+      return 1;
     } else if (freq < 1000000) {
-      return freq / 1000;
+      return 1000;
     } else if (freq < 1000000000) {
-      return freq / 1000000;
+      return 1000000;
     } else if (freq < 1000000000000) {
-      return freq / 1000000000;
+      return 1000000000;
     } else {
-      return freq / 1000000000000;
+      return 1000000000000;
     }
   }
 
@@ -377,7 +390,7 @@ export class WsspectrumComponent implements OnInit {
 
     const ctx = this.ctxSpectrum;
     const w = this.cspectrum.nativeElement.width / fftSize;
-    ctx.fillStyle = 'rgba(255,248,180,1.0)';
+    ctx.fillStyle = 'rgba(255, 248, 180, 1.0)';
     ctx.fillRect(0, 0, this.cspectrum.nativeElement.width, this.cspectrum.nativeElement.height);
     ctx.beginPath();
 
@@ -455,20 +468,30 @@ export class WsspectrumComponent implements OnInit {
     this.drawPowScale(this.powerTicks);
   }
 
-  getFrequencyTicks(axisSpan: number, centerFrequency: bigint, bandwidth: number): Tick[] {
+  getFrequencyTicks(axisSpan: number, centerFrequency: bigint, bandwidth: number, ssb: boolean, usb: boolean): Tick[] {
     const nbTicks = Math.floor(axisSpan / this.FREQ_TICK_SPACE); // optimal number of ticks
     const freqStep = this.getFrequencyStep(bandwidth / nbTicks);
     const freqDensity = axisSpan / bandwidth;
-    const absFreqStart = Number(centerFrequency) - (bandwidth / 2);
-    const absFreqStop = Number(centerFrequency) + (bandwidth / 2);
+    let absFreqStart: number;
+    let absFreqStop: number;
+
+    if (ssb) {
+      absFreqStart = Number(centerFrequency);
+      absFreqStop = Number(centerFrequency) + bandwidth;
+    } else {
+      absFreqStart = Number(centerFrequency) - (bandwidth / 2);
+      absFreqStop = Number(centerFrequency) + (bandwidth / 2);
+    }
+
     const freqStart = (Math.floor(absFreqStart / freqStep) + 1) * freqStep;
     const ticks: Tick[] = [];
     for (let f = freqStart; f < absFreqStop; f += freqStep) {
       ticks.push({
         axisValue: Math.floor((f - absFreqStart) * freqDensity),
-        value: f
+        value: usb ? f : -f
       });
     }
+
     return ticks;
   }
 
