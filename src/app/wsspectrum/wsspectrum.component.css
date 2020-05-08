@@ -27,6 +27,20 @@
     position: absolute;
 }
 
+.cwaterfall {
+    z-index: 0;
+    position: absolute;
+}
+
+.cwaterfallGrid {
+    z-index: 1;
+    position: absolute;
+}
+
+.ctimeScale {
+    position: absolute;
+}
+
 td {
     background-color: rgb(230, 230, 210);
 }

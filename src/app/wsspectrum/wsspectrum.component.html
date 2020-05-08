@@ -45,32 +45,51 @@
         </table>
     </span>
     <div style="position:relative">
-        <canvas #cspectrum class="cspectrum"
-            width={{getSpectrumWidth()}}
-            height="{{getSpectrumHeight()}}"
-            [style.left.px]="getSpectrumLeft()"
-        ></canvas>
-        <canvas #cspectrumGrid class="cspectrumGrid"
-            width={{getSpectrumWidth()}}
-            height="{{getSpectrumHeight()}}"
-            [style.left.px]="getSpectrumLeft()"
-        ></canvas>
-        <canvas #cfreqScale class="cfreqScale"
-            width={{getSpectrumWidth()}}
-            height="18px"
-            [style.top.px]="getSpectrumHeight()"
-            [style.left.px]="getSpectrumLeft()"
-        ></canvas>
-        <canvas #cfreqUnits class="cfreqUnits"
-            width={{getPowScaleWidth()}}
-            height="18px"
-            [style.top.px]="getSpectrumHeight()"
-        ></canvas>
-        <canvas #cpowScale class="cpowScale"
-            width="{{getPowScaleWidth()}}"
-            height="{{getSpectrumHeight()}}"
-        ></canvas>
+        <div style="position:relative">
+            <canvas #cspectrum class="cspectrum"
+                width={{getSpectrumWidth()}}
+                height="{{getSpectrumHeight()}}"
+                [style.left.px]="getSpectrumLeft()"
+            ></canvas>
+            <canvas #cspectrumGrid class="cspectrumGrid"
+                width={{getSpectrumWidth()}}
+                height="{{getSpectrumHeight()}}"
+                [style.left.px]="getSpectrumLeft()"
+            ></canvas>
+            <canvas #cpowScale class="cpowScale"
+                width="{{getPowScaleWidth()}}"
+                height="{{getSpectrumHeight()}}"
+            ></canvas>
+            <canvas #cfreqScale class="cfreqScale"
+                width={{getSpectrumWidth()}}
+                height="18px"
+                [style.top.px]="getSpectrumHeight()"
+                [style.left.px]="getSpectrumLeft()"
+            ></canvas>
+            <canvas #cfreqUnits class="cfreqUnits"
+                width={{getPowScaleWidth()}}
+                height="18px"
+                [style.top.px]="getSpectrumHeight()"
+            ></canvas>
+        </div>
         <canvas width={{width}} height="{{(width/4)+18}}"></canvas>
+        <div style="position:relative">
+            <canvas #cwaterfall class="cwaterfall"
+                width={{getSpectrumWidth()}}
+                height="{{getSpectrumHeight()}}"
+                [style.left.px]="getSpectrumLeft()"
+            ></canvas>
+            <canvas #cwaterfallGrid class="cwaterfallGrid"
+                width={{getSpectrumWidth()}}
+                height="{{getSpectrumHeight()}}"
+                [style.left.px]="getSpectrumLeft()"
+            ></canvas>
+            <canvas #ctimeScale class="ctimeScale"
+                width="{{getPowScaleWidth()}}"
+                height="{{getSpectrumHeight()}}"
+            ></canvas>
+        </div>
+        <canvas width={{width}} height="{{(width/4)}}"></canvas>
     </div>
     <div>
     </div>

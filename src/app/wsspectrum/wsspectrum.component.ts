@@ -26,6 +26,7 @@ export class WsspectrumComponent implements OnInit {
   powerRangeLin = 1e-4;
   frequencyTicks: Tick[] = [];
   powerTicks: Tick[] = [];
+  timeTicks: Tick[] = [];
   initPowerScale: boolean;
 
   @ViewChild('cspectrum', { static: true })
@@ -38,11 +39,21 @@ export class WsspectrumComponent implements OnInit {
   cfreqUnits: ElementRef<HTMLCanvasElement>;
   @ViewChild('cpowScale', { static: true })
   cpowScale: ElementRef<HTMLCanvasElement>;
+  @ViewChild('cwaterfall', { static: true })
+  cwaterfall: ElementRef<HTMLCanvasElement>;
+  @ViewChild('cwaterfallGrid', { static: true })
+  cwaterfallGrid: ElementRef<HTMLCanvasElement>;
+  @ViewChild('ctimeScale', { static: true })
+  ctimeScale: ElementRef<HTMLCanvasElement>;
+
   private ctxSpectrum: CanvasRenderingContext2D;
   private ctxSpectrumGrid: CanvasRenderingContext2D;
   private ctxFreqScale: CanvasRenderingContext2D;
   private ctxFreqUnits: CanvasRenderingContext2D;
   private ctxPowScale: CanvasRenderingContext2D;
+  private ctxWaterfall: CanvasRenderingContext2D;
+  private ctxWaterfallGrid: CanvasRenderingContext2D;
+  private ctxTimeScale: CanvasRenderingContext2D;
 
   constructor(private wsService: WebsocketService) {
       wsService.connect('ws://192.168.0.24:8887').subscribe(spectrum => {
@@ -51,6 +62,7 @@ export class WsspectrumComponent implements OnInit {
           this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
           this.drawFreqScale(this.frequencyTicks);
           this.drawFreqUnits(spectrum.centerFrequency);
+          this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
         }
         if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
           this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
@@ -58,6 +70,8 @@ export class WsspectrumComponent implements OnInit {
           this.initPowerScale = false;
         }
         this.drawSpectrum(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
+        this.drawWaterfall(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
+        this.drawTimeScale(this.timeTicks);
         this.spectrum = spectrum;
       });
     }
@@ -69,7 +83,11 @@ export class WsspectrumComponent implements OnInit {
     this.ctxFreqUnits = this.cfreqUnits.nativeElement.getContext('2d');
     this.ctxPowScale = this.cpowScale.nativeElement.getContext('2d');
     this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
+    this.ctxWaterfall = this.cwaterfall.nativeElement.getContext('2d');
+    this.ctxWaterfallGrid = this.cwaterfallGrid.nativeElement.getContext('2d');
+    this.ctxTimeScale = this.ctimeScale.nativeElement.getContext('2d');
     this.initPowerScale = true;
+    this.timeTicks = this.getTimeTicks(this.getSpectrumHeight());
   }
 
   getSpectrumHeight() {
@@ -160,6 +178,40 @@ export class WsspectrumComponent implements OnInit {
       ctx.lineTo(w, tick.axisValue);
     });
     ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.stroke();
+  }
+
+  drawWaterfallGrid(frequencyTicks: Tick[], timeTicks: Tick[]): void {
+    if (this.cwaterfallGrid == null) {
+      return;
+    }
+
+    const ctx = this.ctxWaterfallGrid;
+    const w = this.cwaterfallGrid.nativeElement.width;
+    const h = this.cwaterfallGrid.nativeElement.height;
+
+    // Clear grid canvas
+    ctx.fillStyle = 'rgba(0,0,0,1.0)';
+    ctx.globalCompositeOperation = 'destination-out'; // clear foreground
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Redraw frequency grid
+    ctx.beginPath();
+    frequencyTicks.forEach(tick => {
+      ctx.moveTo(tick.axisValue, 0);
+      ctx.lineTo(tick.axisValue, h);
+    });
+    ctx.strokeStyle = 'rgba(128,255,255,0.75)';
+    ctx.stroke();
+
+    // Redraw time grid
+    ctx.beginPath();
+    timeTicks.forEach(tick => {
+      ctx.moveTo(0, tick.axisValue);
+      ctx.lineTo(w, tick.axisValue);
+    });
+    ctx.strokeStyle = 'rgba(128,255,255,0.75)';
     ctx.stroke();
   }
 
@@ -259,6 +311,20 @@ export class WsspectrumComponent implements OnInit {
     });
   }
 
+  drawTimeScale(ticks: Tick[]): void {
+    if (this.ctimeScale == null) {
+      return;
+    }
+
+    const ctx = this.ctxTimeScale;
+    const w = this.ctimeScale.nativeElement.width;
+    const h = this.ctimeScale.nativeElement.height;
+
+    // Clear scale
+    ctx.fillStyle = 'rgba(245, 245, 225, 1.0)';
+    ctx.fillRect(0, 0, w, h);
+  }
+
   drawSpectrum(fftSize: number, series: Float32Array, linear: boolean) {
     if (this.cspectrum == null) {
       return;
@@ -297,7 +363,59 @@ export class WsspectrumComponent implements OnInit {
     ctx.stroke();
   }
 
-  onPowerScaleChanged() {
+  drawWaterfall(fftSize: number, series: Float32Array, linear: boolean) {
+    if (this.cwaterfall == null) {
+      return;
+    }
+
+    let refLevel: number;
+    let powerRange: number;
+
+    if (linear) {
+        refLevel = this.refLevelLin;
+        powerRange = this.powerRangeLin;
+    } else {
+        refLevel = this.refLevelDb;
+        powerRange = this.powerRangeDb;
+    }
+
+    const ctx = this.ctxWaterfall;
+    const h = this.cwaterfall.nativeElement.height;
+    const w = this.cwaterfall.nativeElement.width;
+    const wx = w / fftSize;
+
+    // ctx.fillStyle = 'rgba(255,248,180,1.0)';
+    // ctx.fillRect(0, 0, this.cwaterfall.nativeElement.width, this.cwaterfall.nativeElement.height);
+    const image = ctx.getImageData(0, 0, w, h - 1);
+    ctx.putImageData(image, 0, 1);
+    const imgdata = ctx.getImageData(0, 0, this.cwaterfall.nativeElement.width, 1);
+
+    for (let bin = 0; bin < fftSize; bin++) {
+        const xPos = Math.floor(bin * wx);
+        let pow: number = (refLevel - series[bin]) / powerRange; // 0.0 -> 1.0 range high to low
+        pow = (pow < 0.0) ? 0.0 : (pow > 1.0) ? 1.0 : pow;
+        imgdata.data[4 * xPos] = this.powToRed(pow);
+        imgdata.data[4 * xPos + 1] = this.powToGreen(pow);
+        imgdata.data[4 * xPos + 2] = this.powToBlue(pow);
+        imgdata.data[4 * xPos + 3] = 255;
+    }
+
+    ctx.putImageData(imgdata, 0, 0);
+  }
+
+  private powToRed(pow: number): number {
+      return 255 * pow;
+  }
+
+  private powToGreen(pow: number): number {
+      return 248 * pow;
+  }
+
+  private powToBlue(pow: number): number {
+    return 180 * pow;
+  }
+
+onPowerScaleChanged() {
     this.refLevelLin = Math.pow(10, this.refLevelDb / 10);
     this.powerRangeLin = this.refLevelLin;
     this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
@@ -384,5 +502,14 @@ export class WsspectrumComponent implements OnInit {
         return 10 * s;
       }
     }
+  }
+
+  getTimeTicks(axisSpan: number): Tick[] {
+    const ticks: Tick[] = [];
+    ticks.push({
+      axisValue: Math.floor(axisSpan / 10),
+      value: 0
+    });
+    return ticks;
   }
 }
