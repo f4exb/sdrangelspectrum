@@ -34,6 +34,10 @@ export class WebsocketService {
     return this.connection;
   }
 
+  public disconnect(){
+    this.connection.unsubscribe();
+  }
+
   // for completeness - unused normally
   public send(request: any) {
     this.connection.next(request);

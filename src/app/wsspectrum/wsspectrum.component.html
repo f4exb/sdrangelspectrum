@@ -41,6 +41,13 @@
                 <td>
                     DT {{spectrum.elapsedMs}} ms
                 </td>
+                <td>
+                    URI
+                    <input type="string" class="uri-input"
+                      [(ngModel)]="wsUri"
+                      (change)="onUriChanged()"
+                    >
+                </td>
             </tr>
         </table>
     </span>

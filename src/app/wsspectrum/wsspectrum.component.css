@@ -5,6 +5,10 @@
     bottom: 2px;
 }
 
+.uri-input {
+    width: 30ch
+}
+
 .cspectrum {
     z-index: 0;
     position: absolute;

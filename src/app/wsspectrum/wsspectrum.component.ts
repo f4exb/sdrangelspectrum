@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Spectrum, SPECTRUM_DEFAULT } from '../spectrum';
 import { WebsocketService } from '../websocket.service';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 interface Tick {
     axisValue: number;
@@ -15,6 +14,7 @@ interface Tick {
 })
 export class WsspectrumComponent implements OnInit {
   @Input('width') width: number;
+  wsUri = 'ws://127.0.0.1:8887';
   spectrum: Spectrum = SPECTRUM_DEFAULT;
   NMARKERS = 4;   // number of markers either side of centre
   POW_WIDTH = 60; // width in pixels of power scale
@@ -59,27 +59,44 @@ export class WsspectrumComponent implements OnInit {
   private ctxTimeScale: CanvasRenderingContext2D;
 
   constructor(private wsService: WebsocketService) {
-      wsService.connect('ws://192.168.0.24:8887').subscribe(spectrum => {
-        this.pushFFTTime(Number(spectrum.elapsedMs));
-        this.timeTicks = this.getTimeTicks();
-        if ((spectrum.centerFrequency !== this.spectrum.centerFrequency) || (spectrum.bandwidth !== this.spectrum.bandwidth)) {
-          this.frequencyTicks = this.getFrequencyTicks(this.getSpectrumWidth(), spectrum.centerFrequency, spectrum.bandwidth);
-          this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
-          this.drawFreqScale(this.frequencyTicks);
-          this.drawFreqUnits(spectrum.centerFrequency);
-        }
-        if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
-            this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
-            this.drawPowScale(this.powerTicks);
-            this.initPowerScale = false;
-        }
-        this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
-        this.drawSpectrum(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
-        this.drawWaterfall(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
-        this.drawTimeScale(this.timeTicks);
-        this.spectrum = spectrum;
-      });
+    this.connect(this.wsUri);
+  }
+
+  private connect(uri: string) {
+    this.wsService.connect(uri).subscribe(spectrum => {
+      this.processSpectrum(spectrum);
+    });
+  }
+
+  private disconnect() {
+    this.wsService.disconnect();
+  }
+
+  private processSpectrum(spectrum: Spectrum): void {
+    this.pushFFTTime(Number(spectrum.elapsedMs));
+    this.timeTicks = this.getTimeTicks();
+    if ((spectrum.centerFrequency !== this.spectrum.centerFrequency) || (spectrum.bandwidth !== this.spectrum.bandwidth)) {
+      this.frequencyTicks = this.getFrequencyTicks(this.getSpectrumWidth(), spectrum.centerFrequency, spectrum.bandwidth);
+      this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
+      this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
+      this.drawFreqScale(this.frequencyTicks);
+      this.drawFreqUnits(spectrum.centerFrequency);
     }
+    if (this.initPowerScale || (spectrum.linear !== this.spectrum.linear)) {
+      this.powerTicks = this.getPowerTicks(this.getSpectrumHeight());
+      this.drawPowScale(this.powerTicks);
+      this.initPowerScale = false;
+    }
+    this.drawSpectrum(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
+    this.drawWaterfall(spectrum.fftSize, spectrum.spectrum, spectrum.linear);
+    this.drawTimeScale(this.timeTicks);
+    this.spectrum = spectrum;
+  }
+
+  onUriChanged() {
+    this.disconnect();
+    this.connect(this.wsUri);
+  }
 
   ngOnInit(): void {
     this.ctxSpectrum = this.cspectrum.nativeElement.getContext('2d');
@@ -335,8 +352,10 @@ export class WsspectrumComponent implements OnInit {
 
     ticks.forEach(tick => {
       let label: string;
-      label = (tick.value / 1000).toFixed(1);
-      ctx.fillText(label, this.getPowScaleWidth() - 2, tick.axisValue);
+      if (tick.value !== 0) { // 0 is a N/A value
+        label = (tick.value / 1000).toFixed(1);
+        ctx.fillText(label, this.getPowScaleWidth() - 2, tick.axisValue);
+      }
     });
   }
 
@@ -399,8 +418,6 @@ export class WsspectrumComponent implements OnInit {
     const w = this.cwaterfall.nativeElement.width;
     const wx = fftSize / w;
 
-    // ctx.fillStyle = 'rgba(255,248,180,1.0)';
-    // ctx.fillRect(0, 0, this.cwaterfall.nativeElement.width, this.cwaterfall.nativeElement.height);
     const image = ctx.getImageData(0, 0, w, h - 1);
     ctx.putImageData(image, 0, 1);
     const imgdata = ctx.getImageData(0, 0, w, 1);
@@ -522,12 +539,12 @@ export class WsspectrumComponent implements OnInit {
   getTimeTicks(): Tick[] {
     const ticks: Tick[] = [];
     let timeCounter = 0;
-    for (let i = 0; i < this.fftTimes.length; i++) {
+    for (let i = 0; i < this.getSpectrumHeight(); i++) {
       timeCounter += this.getFFTTime(i);
-      if ((i !== 0) && (i % this.TIME_TICK_SPACE === 0) && (i < this.getSpectrumHeight())) {
+      if ((i !== 0) && (i % this.TIME_TICK_SPACE === 0)) {
         ticks.push({
             axisValue: i,
-            value: timeCounter
+            value: this.getFFTTime(i) === 0 ? 0 : timeCounter
         });
       }
     }
