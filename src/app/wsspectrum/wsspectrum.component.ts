@@ -263,11 +263,17 @@ export class WsspectrumComponent implements OnInit {
     ctx.textAlign = 'center';
     ctx.fillStyle = 'black';
     let scaleFactor = 1;
-    if (ticks.length >= 0) {
+    let nbDecimals = 3;
+    if (ticks.length > 0) {
       scaleFactor = this.getFrquencyScale(ticks[ticks.length - 1].value);
     }
+    if (ticks.length > 1) {
+      const freqStep = ticks[1].value > ticks[0].value ? ticks[1].value - ticks[0].value : ticks[0].value - ticks[1].value;
+      nbDecimals = Math.log10(scaleFactor) - Math.floor(Math.log10(freqStep));
+      nbDecimals = nbDecimals < 0 ? -nbDecimals : nbDecimals;
+    }
     ticks.forEach(tick => {
-      const label = (tick.value / scaleFactor).toFixed(3).toString();
+      const label = (tick.value / scaleFactor).toFixed(nbDecimals).toString();
       ctx.fillText(label, tick.axisValue, h - 4);
     });
   }
@@ -449,15 +455,15 @@ export class WsspectrumComponent implements OnInit {
   }
 
   private powToRed(pow: number): number {
-      return 255 * pow;
+    return 255 * pow;
   }
 
   private powToGreen(pow: number): number {
-      return 248 * pow;
+    return 248 * pow; // (497 * pow) % 249;
   }
 
   private powToBlue(pow: number): number {
-    return 180 * pow;
+    return 180 * pow; // (361 * pow) % 181; // 180 * pow;
   }
 
   onPowerScaleChanged() {
