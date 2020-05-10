@@ -57,6 +57,14 @@ sudo zypper in nodejs npm
 sudo npm install npm -g
 ```
 
+### And for node do:
+
+```bash
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+```
+
 ## Step 2. Clone the repository and set up environment
 
 ```bash
@@ -64,7 +72,7 @@ sudo npm install npm -g
 git clone https://github.com/f4exb/sdrangelspectrum
 
 # install global dependencies
-sudo npm install -g @angular/cli@8
+sudo npm install -g @angular/cli@9
 
 # install local dependencies
 cd sdrangelspectrum
