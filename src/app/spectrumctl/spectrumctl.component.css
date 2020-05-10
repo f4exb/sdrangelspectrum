@@ -1,0 +1,22 @@
+.spectrum-control-card {
+  font-size: 14px;
+  font-family: Arial;
+  border: outset;
+  border-color: whitesmoke;
+  border-width: 2px;
+  margin-bottom: 5px;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.device-number-input {
+  width: 6ch;
+}
+
+td {
+  background-color: rgb(230, 230, 210);
+}
+
+::ng-deep .mat-card {
+  /* CSS styles go here */
+  padding: 10px; /* for example to remove the margin */
+}

@@ -5,17 +5,21 @@
     bottom: 2px;
 }
 
+.port-input {
+    width: 8ch
+}
+
 .uri-input {
-    width: 30ch
+  width: 20ch
 }
 
 .cspectrum {
-    z-index: 0;
+    z-index: -2;
     position: absolute;
 }
 
 .cspectrumGrid {
-    z-index: 1;
+    z-index: -1;
     position: absolute;
 }
 
@@ -32,12 +36,12 @@
 }
 
 .cwaterfall {
-    z-index: 0;
+    z-index: -2;
     position: absolute;
 }
 
 .cwaterfallGrid {
-    z-index: 1;
+    z-index: -1;
     position: absolute;
 }
 

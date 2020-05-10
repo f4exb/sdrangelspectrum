@@ -1,12 +1,18 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
-<div>
-    <app-wsspectrum width="1200"></app-wsspectrum>
+<mat-card class="top-card">
+  <span>{{ title }}</span>&nbsp;
+  <span class="version">v{{version}}</span>&nbsp;
+  <input type="text" class="input-card" [(ngModel)]="sdrangelURL" name="sdrangelURL" size="40" matTooltip="URL of the instance to connect to">
+  &nbsp;
+  <button mat-button class="button-card" (click)="validateURL()" matTooltip="(re)connect to URL">
+    <img src="./assets/icons/if_checkmark.svg" style="height:16px; width:16px"/>
+  </button>
+</mat-card>
+<div style="position:relative">
+  <app-instance-summary></app-instance-summary>
+</div>
+<div style="position:relative;border:outset;width:1200px">
+  <app-wsspectrum width="1200"></app-wsspectrum>
+</div>
+<div style="position:relative;border:outset;width:1200px">
+  <app-spectrumctl></app-spectrumctl>
 </div>

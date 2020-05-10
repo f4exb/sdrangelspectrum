@@ -1,0 +1,38 @@
+.instance-summary-card {
+  font-size: 14px;
+  font-family: Arial;
+  border: outset;
+  border-color: whitesmoke;
+  border-width: 2px;
+  margin-bottom: 5px;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.button-card {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  width: 22px;
+  height: 22px;
+}
+
+.status-ok-card {
+  border: outset;
+  border-color: rgb(134, 255, 110);
+  border-width: 2px;
+  margin-bottom: 5px;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.status-ko-card {
+  border: solid;
+  border-color: rgb(255, 134, 110);
+  border-width: 2px;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.top-card {
+  border: none;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+}

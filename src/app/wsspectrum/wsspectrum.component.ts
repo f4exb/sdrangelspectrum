@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Spectrum, SPECTRUM_DEFAULT } from '../spectrum';
 import { WebsocketService } from '../websocket.service';
+import { SdrangelUrlService } from '../sdrangel-url.service';
+import { Utils } from 'src/app/common-components/utils';
 
 interface Tick {
     axisValue: number;
@@ -14,6 +16,9 @@ interface Tick {
 })
 export class WsspectrumComponent implements OnInit {
   @Input('width') width: number;
+  sdrangelURL: string;
+  wsHost = '127.0.0.1';
+  wsPort = 8887;
   wsUri = 'ws://127.0.0.1:8887';
   spectrum: Spectrum = SPECTRUM_DEFAULT;
   NMARKERS = 4;   // number of markers either side of centre
@@ -58,8 +63,13 @@ export class WsspectrumComponent implements OnInit {
   private ctxWaterfallGrid: CanvasRenderingContext2D;
   private ctxTimeScale: CanvasRenderingContext2D;
 
-  constructor(private wsService: WebsocketService) {
+  constructor(private sdrangelUrlService: SdrangelUrlService,
+              private wsService: WebsocketService) {
     this.connect(this.wsUri);
+    this.sdrangelUrlService.currentUrlSource.subscribe(url => {
+      this.sdrangelURL = url;
+      this.constructWsUri();
+    });
   }
 
   private connect(uri: string) {
@@ -102,7 +112,29 @@ export class WsspectrumComponent implements OnInit {
     this.spectrum = spectrum;
   }
 
+  constructWsUri() {
+    const apiData = Utils.parseUri(this.sdrangelURL);
+    // tslint:disable-next-line:no-string-literal
+    this.wsHost = apiData['host'];
+    this.wsUri = 'ws://' + this.wsHost + ':' + this.wsPort.toString();
+    this.reconnect();
+  }
+
   onUriChanged() {
+    const apiData = Utils.parseUri(this.wsUri);
+    // tslint:disable-next-line:no-string-literal
+    this.wsHost = apiData['host'];
+    // tslint:disable-next-line:no-string-literal
+    this.wsPort = Number(apiData['port']);
+    this.reconnect();
+  }
+
+  onPortChanged() {
+    this.wsUri = 'ws://' + this.wsHost + ':' + this.wsPort.toString();
+    this.reconnect();
+  }
+
+  reconnect() {
     this.disconnect();
     this.connect(this.wsUri);
   }

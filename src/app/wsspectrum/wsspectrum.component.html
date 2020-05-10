@@ -1,105 +1,129 @@
 <div>
-    <span>
-        <table>
-            <tr>
-                <td>
-                    Ref
-                    <input type="number" class="power-input"
-                      [(ngModel)]="refLevelDb"
-                      (change)="onPowerScaleChanged()"
-                      min=-100 max=0 step=1
-                    >
-                    dB
-                </td>
-                <td>
-                    Range
-                    <input type="number" class="power-input"
-                      [(ngModel)]="powerRangeDb"
-                      (change)="onPowerScaleChanged()"
-                      min=5 max=100 step=1
-                    >
-                    dB
-                </td>
-                <td>
-                    FFT {{spectrum.fftSize}}
-                </td>
-                <td>
-                    {{getLinLog()}}
-                </td>
-                <td>
-                    {{getSpectrumDirection()}}
-                </td>
-                <td>
-                    CF {{spectrum.centerFrequency}} Hz
-                </td>
-                <td>
-                    BW {{spectrum.bandwidth}} Hz
-                </td>
-                <td>
-                    TS {{getFormattedDate()}}
-                </td>
-                <td>
-                    DT {{spectrum.elapsedMs}} ms
-                </td>
-                <td>
-                    URI
-                    <input type="string" class="uri-input"
-                      [(ngModel)]="wsUri"
-                      (change)="onUriChanged()"
-                    >
-                </td>
-            </tr>
-        </table>
-    </span>
-    <div style="position:relative">
-        <div style="position:relative">
-            <canvas #cspectrum class="cspectrum"
-                width={{getSpectrumWidth()}}
-                height="{{getSpectrumHeight()}}"
-                [style.left.px]="getSpectrumLeft()"
-            ></canvas>
-            <canvas #cspectrumGrid class="cspectrumGrid"
-                width={{getSpectrumWidth()}}
-                height="{{getSpectrumHeight()}}"
-                [style.left.px]="getSpectrumLeft()"
-            ></canvas>
-            <canvas #cpowScale class="cpowScale"
-                width="{{getPowScaleWidth()}}"
-                height="{{getSpectrumHeight()}}"
-            ></canvas>
-            <canvas #cfreqScale class="cfreqScale"
-                width={{getSpectrumWidth()}}
-                height="18px"
-                [style.top.px]="getSpectrumHeight()"
-                [style.left.px]="getSpectrumLeft()"
-            ></canvas>
-            <canvas #cfreqUnits class="cfreqUnits"
-                width={{getPowScaleWidth()}}
-                height="18px"
-                [style.top.px]="getSpectrumHeight()"
-            ></canvas>
-        </div>
-        <canvas width={{width}} height="{{(width/4)+18}}"></canvas>
-        <div style="position:relative">
-            <canvas #cwaterfall class="cwaterfall"
-                width={{getSpectrumWidth()}}
-                height="{{getSpectrumHeight()}}"
-                [style.left.px]="getSpectrumLeft()"
-            ></canvas>
-            <canvas #cwaterfallGrid class="cwaterfallGrid"
-                width={{getSpectrumWidth()}}
-                height="{{getSpectrumHeight()}}"
-                [style.left.px]="getSpectrumLeft()"
-            ></canvas>
-            <canvas #ctimeScale class="ctimeScale"
-                width="{{getPowScaleWidth()}}"
-                height="{{getSpectrumHeight()}}"
-            ></canvas>
-        </div>
-        <canvas width={{width}} height="{{(width/4)}}"></canvas>
-    </div>
-    <div>
-    </div>
+  <span>
+    <table>
+      <tr>
+        <td>
+          Ref
+          <input type="number" class="power-input"
+            [(ngModel)]="refLevelDb"
+            (change)="onPowerScaleChanged()"
+            matTooltip="Reference level (dB)"
+            min=-100 max=0 step=1
+          >
+          dB
+        </td>
+        <td>
+          Range
+          <input type="number" class="power-input"
+            [(ngModel)]="powerRangeDb"
+            (change)="onPowerScaleChanged()"
+            matTooltip="Power range (dB) in log mode"
+            min=5 max=100 step=1
+          >
+          dB
+        </td>
+        <td matTooltip="FFT size">
+          FFT {{spectrum.fftSize}}
+        </td>
+        <td matTooltip="Linear or log values">
+          {{getLinLog()}}
+        </td>
+        <td matTooltip="Spectrum span mode">
+          {{getSpectrumDirection()}}
+        </td>
+        <td matTooltip="Center or side frequency">
+          CF {{spectrum.centerFrequency}} Hz
+        </td>
+        <td matTooltip="Spectrum bandwidth">
+          BW {{spectrum.bandwidth}} Hz
+        </td>
+        <td matTooltip="ISO date of last FFT">
+          TS {{getFormattedDate()}}
+        </td>
+        <td matTooltip="Elapsed time of last FFT">
+          DT {{spectrum.elapsedMs}} ms
+        </td>
+        <td>
+          Port
+          <input type="number" class="port-input"
+            [(ngModel)]="wsPort"
+            (change)="onPortChanged()"
+            matTooltip="Spectrum server port to connect to"
+            min=-1024 max=65535 step=1
+          >
+        </td>
+        <td>
+          URI
+          <input type="string" class="uri-input"
+            [(ngModel)]="wsUri"
+            (change)="onUriChanged()"
+            matTooltip="Spectrum server websocket complete URI"
+          >
+        </td>
+        <td>
+          <button mat-button class="button-card button-margin"
+            (click)="reconnect()"
+            matTooltip="Reconnect to spectrum server"
+          >
+            <img src="./assets/icons/play-outline.svg" style="height:14px; width:14px; padding-top: 2px"/>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </span>
+  <div style="position:relative">
+      <div style="position:relative">
+          <canvas #cspectrum class="cspectrum"
+              width={{getSpectrumWidth()}}
+              height="{{getSpectrumHeight()}}"
+              [style.left.px]="getSpectrumLeft()"
+          ></canvas>
+          <canvas #cspectrumGrid class="cspectrumGrid"
+              width={{getSpectrumWidth()}}
+              height="{{getSpectrumHeight()}}"
+              [style.left.px]="getSpectrumLeft()"
+          ></canvas>
+          <canvas #cpowScale class="cpowScale"
+              width="{{getPowScaleWidth()}}"
+              height="{{getSpectrumHeight()}}"
+              matTooltip="Power scale (dB or linear)"
+          ></canvas>
+          <canvas #cfreqScale class="cfreqScale"
+              width={{getSpectrumWidth()}}
+              height="18px"
+              [style.top.px]="getSpectrumHeight()"
+              [style.left.px]="getSpectrumLeft()"
+              matTooltip="Frequency scale"
+          ></canvas>
+          <canvas #cfreqUnits class="cfreqUnits"
+              width={{getPowScaleWidth()}}
+              height="18px"
+              [style.top.px]="getSpectrumHeight()"
+              matTooltip="Frequency units"
+          ></canvas>
+      </div>
+      <canvas width={{width}} height="{{(width/4)+18}}"></canvas>
+      <div style="position:relative">
+          <canvas #cwaterfall class="cwaterfall"
+              width={{getSpectrumWidth()}}
+              height="{{getSpectrumHeight()}}"
+              [style.left.px]="getSpectrumLeft()"
+          ></canvas>
+          <canvas #cwaterfallGrid class="cwaterfallGrid"
+              width={{getSpectrumWidth()}}
+              height="{{getSpectrumHeight()}}"
+              [style.left.px]="getSpectrumLeft()"
+          ></canvas>
+          <canvas #ctimeScale class="ctimeScale"
+              width="{{getPowScaleWidth()}}"
+              height="{{getSpectrumHeight()}}"
+              matTooltip="Time scale (s)"
+          ></canvas>
+      </div>
+      <canvas width={{width}} height="{{(width/4)}}"></canvas>
+  </div>
+  <div>
+  </div>
 </div>
 
 

@@ -1,0 +1,80 @@
+<div>
+  <table>
+    <tr>
+      <td>
+        Dev
+        <input type="number" class="device-number-input"
+          [(ngModel)]="deviceIndex"
+          (change)="onDeviceIndexChanged()"
+          matTooltip="Device index"
+          min=0 max=10 step=1
+        >
+      </td>
+      <td>
+        FFT Window
+        <mat-select style="width:12ch; background-color: white; margin: 1px;"
+          [(value)]="settings.fftWindow"
+          (selectionChange)="setFFTWindow()"
+          matTooltip="FFT window function">
+          <mat-option *ngFor="let fftWindow of fftWindows" [value]="fftWindow.value">
+            {{fftWindow.viewValue}}
+          </mat-option>
+        </mat-select>
+      </td>
+      <td>
+        FFT Size
+        <mat-select style="width:8ch; background-color: white; margin: 1px;"
+          [(value)]="settings.fftSize"
+          (selectionChange)="setFFTSize()"
+          matTooltip="FFT size">
+          <mat-option *ngFor="let fftSize of fftSizes" [value]="fftSize.value">
+            {{fftSize.viewValue}}
+          </mat-option>
+        </mat-select>
+      </td>
+      <td>
+        Avg mode
+        <mat-select style="width:12ch; background-color: white; margin: 1px;"
+          [(value)]="settings.averagingMode"
+          (selectionChange)="setAveragingMode()"
+          matTooltip="Type of FFT averaging">
+          <mat-option *ngFor="let averagingMode of averagingModes" [value]="averagingMode.value">
+            {{averagingMode.viewValue}}
+          </mat-option>
+        </mat-select>
+      </td>
+      <td>
+        Avg value
+        <mat-select style="width:8ch; background-color: white; margin: 1px;"
+          [(value)]="settings.averagingValue"
+          (selectionChange)="setAveragingValue()"
+          matTooltip="Number of FFTs to average over">
+          <mat-option *ngFor="let averagingValue of averagingValues" [value]="averagingValue.value">
+            {{averagingValue.viewValue}}
+          </mat-option>
+        </mat-select>
+      </td>
+      <td>
+        <button mat-button class="button-card" (click)="onDeviceIndexChanged()" matTooltip="Refresh">
+          <img src="./assets/icons/if_refresh.svg" style="height:16px; width:16px"/>
+        </button>
+      </td>
+      <td>
+        <button mat-button class="button-card button-margin"  (click)="startServer()" matTooltip="Start server">
+          <img src="./assets/icons/play-outline.svg" style="height:14px; width:14px; padding-top: 2px"/>
+        </button>
+      </td>
+      <td>
+        <button mat-button class="button-card button-margin" (click)="stopServer()"  matTooltip="Stop server">
+          <img src="./assets/icons/stop-outline.svg" style="height:12px; width:12px; padding-top: 3px"/>
+        </button>
+      </td>
+      <td>
+        <i class="fa fa-circle" style="font-size:14px; padding: 4px"
+          [ngStyle]="{'color': getServerStatusColor()}"
+          matTooltip="Server status">
+        </i>
+      </td>
+    </tr>
+  </table>
+</div>
