@@ -82,7 +82,7 @@ Be patient `npm install` can be very long depending on your hardware.
 ```bash
 # build
 cd sdrangelspectrum
-ng build
+ng build --prod # use --prod for production build
 
 # This will create a dist/sdrangelspectrum directory that will contain the application
 # You can copy or move sdrangelspectrum directory wherever you like
@@ -163,9 +163,9 @@ We recommend using:
 
 If you're using Chrome it might be a good idea to install the [Augury Plugin](https://augury.angular.io) that will help debugging Angular applications
 
-## Sdrangelcli
+## Sdrangelspectrum
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.
 
 ### Development server
 
