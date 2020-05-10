@@ -32,16 +32,19 @@
           {{getSpectrumDirection()}}
         </td>
         <td matTooltip="Center or side frequency">
-          CF {{spectrum.centerFrequency}} Hz
+          F {{spectrum.centerFrequency}} Hz
         </td>
         <td matTooltip="Spectrum bandwidth">
-          BW {{spectrum.bandwidth}} Hz
+          W {{spectrum.bandwidth}} Hz
+        </td>
+        <td style="width:60px;text-align:right" matTooltip="Nominal time of single FFT">
+          {{getNominalFFTTime()}}
         </td>
         <td matTooltip="ISO date of last FFT">
-          TS {{getFormattedDate()}}
+          {{getFormattedDate()}}
         </td>
         <td matTooltip="Elapsed time of last FFT">
-          DT {{spectrum.elapsedMs}} ms
+          {{spectrum.elapsedMs}} ms
         </td>
         <td>
           Port

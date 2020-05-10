@@ -209,6 +209,37 @@ export class WsspectrumComponent implements OnInit {
     }
   }
 
+  getNominalFFTTime(): string {
+    const fftTime = this.spectrum.fftSize / this.spectrum.bandwidth;
+    let res: string;
+    if (fftTime < 0.00000001) {
+      res = (fftTime * 1000000000).toFixed(2) + ' ns';
+    } else if (fftTime < 0.0000001) {
+      res = (fftTime * 1000000000).toFixed(1) + ' ns';
+    } else if (fftTime < 0.000001) {
+      res = (fftTime * 1000000000).toFixed(0) + ' ns';
+    } else if (fftTime < 0.00001) {
+      res = (fftTime * 1000000).toFixed(2) + ' us';
+    } else if (fftTime < 0.0001) {
+      res = (fftTime * 1000000).toFixed(1) + ' us';
+    } else if (fftTime < 0.001) {
+      res = (fftTime * 1000000).toFixed(0) + ' us';
+    } else if (fftTime < 0.01) {
+      res = (fftTime * 1000).toFixed(2) + ' ms';
+    } else if (fftTime < 0.1) {
+      res = (fftTime * 1000).toFixed(1) + ' ms';
+    } else if (fftTime < 1) {
+      res = (fftTime * 1000).toFixed(0) + ' ms';
+    } else if (fftTime < 10) {
+      res = fftTime.toFixed(2) + 's';
+    } else if (fftTime < 100) {
+      res = fftTime.toFixed(1) + 's';
+    } else {
+      res = fftTime.toFixed(0) + 's';
+    }
+    return res;
+  }
+
   drawSpectrumGrid(frequencyTicks: Tick[], powerTicks: Tick[]): void {
     if (this.cspectrumGrid == null) {
       return;

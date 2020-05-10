@@ -1,12 +1,12 @@
 .power-input {
-    width: 6ch;
+    width: 5ch;
     margin: 1px;
     position: relative;
     bottom: 2px;
 }
 
 .port-input {
-    width: 8ch
+    width: 7ch
 }
 
 .uri-input {
