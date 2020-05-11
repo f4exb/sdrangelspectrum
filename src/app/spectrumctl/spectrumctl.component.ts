@@ -59,7 +59,7 @@ export class SpectrumctlComponent implements OnInit {
     {value: 0, viewValue: 'None'},
     {value: 1, viewValue: 'Moving'},
     {value: 2, viewValue: 'Fixed'},
-    {value: 3, viewValue: 'Maximum'},
+    {value: 3, viewValue: 'Max'},
   ];
   averagingValues: AveragingValue[] = [
     {value: 1, viewValue: '1'},
@@ -154,6 +154,18 @@ export class SpectrumctlComponent implements OnInit {
   onDeviceIndexChanged(): void {
     this.getSpectrumSettings();
     this.getServer();
+  }
+
+  setWsSpectrumAddress(): void {
+    const newSettings: GLSpectrumSettings = {} as GLSpectrumSettings;
+    newSettings.wsSpectrumAddress = this.settings.wsSpectrumAddress;
+    this.setSpecttrumSettings(newSettings);
+  }
+
+  setWsSpectrumPort(): void {
+    const newSettings: GLSpectrumSettings = {} as GLSpectrumSettings;
+    newSettings.wsSpectrumPort = this.settings.wsSpectrumPort;
+    this.setSpecttrumSettings(newSettings);
   }
 
   setFFTWindow(): void {

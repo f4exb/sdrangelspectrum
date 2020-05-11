@@ -9,7 +9,15 @@
 }
 
 .device-number-input {
-  width: 6ch;
+  width: 4ch;
+}
+
+.spec-host {
+  width: 14ch
+}
+
+.spec-port {
+  width: 7ch
 }
 
 td {
