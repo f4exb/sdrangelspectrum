@@ -136,6 +136,8 @@ export class WsspectrumComponent implements OnInit {
 
   reconnect() {
     this.disconnect();
+    this.clearWaterfall();
+    this.clearTimeScale();
     this.connect(this.wsUri);
   }
 
@@ -441,6 +443,24 @@ export class WsspectrumComponent implements OnInit {
     });
   }
 
+  clearTimeScale(): void {
+    if (this.ctimeScale == null) {
+      return;
+    }
+
+    const ctx = this.ctxTimeScale;
+    const w = this.ctimeScale.nativeElement.width;
+    const h = this.ctimeScale.nativeElement.height;
+
+    // Clear scale
+    ctx.fillStyle = 'rgba(245, 245, 225, 1.0)';
+    ctx.fillRect(0, 0, w, h);
+
+    // Clear memory
+    this.timeTicks.length = 0;
+    this.fftTimes.length = 0;
+  }
+
   drawSpectrum(fftSize: number, series: Float32Array, linear: boolean) {
     if (this.cspectrum == null) {
       return;
@@ -515,6 +535,21 @@ export class WsspectrumComponent implements OnInit {
     }
 
     ctx.putImageData(imgdata, 0, 0);
+  }
+
+  clearWaterfall() {
+    if (this.cwaterfall == null) {
+      return;
+    }
+
+    const ctx = this.ctxWaterfall;
+    const h = this.cwaterfall.nativeElement.height;
+    const w = this.cwaterfall.nativeElement.width;
+
+    // clear canvas
+    ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
+    ctx.globalCompositeOperation = 'destination-out'; // clear foreground
+    ctx.fillRect(0, 0, w, h);
   }
 
   private powToRed(pow: number): number {
