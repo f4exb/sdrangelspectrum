@@ -10,7 +10,7 @@ You may also ask questions about SDRangel or this web application in the [SDRang
 
 SDRangel is a Software Defined Radio (SDR) application that processes the digital samples produced by various SDR front end devices (RTL-SDR, LimeSDR, ...) using software running on commodity computers to implement radio processing functions that used to be handled by hardware e.g AM, FM demodulation... SDRangel is also capable of driving SDR transmitters in a reversed flow: it produces digital samples that are sent to a SDR transmitter (LimeSDR, HackRF...) to eventually produce a RF signal.
 
-This web application communicates with a SDRangel running instance (GUI based or headless). Relevant spectrum details are controlled via the REST API of SDRangel and the spectrum display uses a secondary websockets based server on a different port. It is written based on Angular 9.1 (see development section for more details).
+This web application communicates with a SDRangel running instance (GUI based or headless). Relevant spectrum details are controlled via the REST API of SDRangel and the spectrum display uses a secondary websockets based server on a different port. It is written based on Angular 15 (see development section for more details).
 
 # Prerequisites
 
@@ -72,7 +72,7 @@ sudo n stable
 git clone https://github.com/f4exb/sdrangelspectrum
 
 # install global dependencies
-sudo npm install -g @angular/cli@12
+sudo npm install -g @angular/cli@15
 
 # install local dependencies
 cd sdrangelspectrum
@@ -173,7 +173,7 @@ If you're using Chrome it might be a good idea to install the [Augury Plugin](ht
 
 ## Sdrangelspectrum
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.
 
 ### Development server
 
