@@ -9,7 +9,7 @@ import { Utils } from 'src/app/common-components/utils';
 })
 export class AppComponent {
   title = 'SDRangelSpectrum';
-  version = '1.0.0';
+  version = '2.0.0';
   sdrangelURL = 'http://127.0.0.1:8091/sdrangel'; // the default URL
 
   constructor(private sdrangelUrlService: SdrangelUrlService,

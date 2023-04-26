@@ -46,6 +46,7 @@ a:hover {
     padding-right: 4px;
     border-radius: 5px;
     position: relative;
+    text-align: center;
     bottom: 2px;
 }
 

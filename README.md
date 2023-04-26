@@ -72,7 +72,7 @@ sudo n stable
 git clone https://github.com/f4exb/sdrangelspectrum
 
 # install global dependencies
-sudo npm install -g @angular/cli@9
+sudo npm install -g @angular/cli@12
 
 # install local dependencies
 cd sdrangelspectrum
@@ -90,7 +90,7 @@ Be patient `npm install` can be very long depending on your hardware.
 ```bash
 # build
 cd sdrangelspectrum
-ng build --prod # use --prod for production build
+ng build --configuration production # use --configuration production for production build
 
 # This will create a dist/sdrangelspectrum directory that will contain the application
 # You can copy or move sdrangelspectrum directory wherever you like

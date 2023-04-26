@@ -12,44 +12,44 @@
       </td>
       <td>
         FFT Window
-        <mat-select style="width:11ch; background-color: white; margin: 1px;"
+        <mat-select style="width:11ch; background-color: white; margin: 1px; font-size: 14px;"
           [(value)]="settings.fftWindow"
           (selectionChange)="setFFTWindow()"
           matTooltip="FFT window function">
-          <mat-option *ngFor="let fftWindow of fftWindows" [value]="fftWindow.value">
+          <mat-option *ngFor="let fftWindow of fftWindows" [value]="fftWindow.value" style="font-size: 14px;">
             {{fftWindow.viewValue}}
           </mat-option>
         </mat-select>
       </td>
       <td>
         FFT Size
-        <mat-select style="width:7ch; background-color: white; margin: 1px;"
+        <mat-select style="width:7ch; background-color: white; margin: 1px; font-size: 14px;"
           [(value)]="settings.fftSize"
           (selectionChange)="setFFTSize()"
           matTooltip="FFT size">
-          <mat-option *ngFor="let fftSize of fftSizes" [value]="fftSize.value">
+          <mat-option *ngFor="let fftSize of fftSizes" [value]="fftSize.value" style="font-size: 14px;">
             {{fftSize.viewValue}}
           </mat-option>
         </mat-select>
       </td>
       <td>
         Avg mode
-        <mat-select style="width:10ch; background-color: white; margin: 1px;"
+        <mat-select style="width:10ch; background-color: white; margin: 1px; font-size: 14px;"
           [(value)]="settings.averagingMode"
           (selectionChange)="setAveragingMode()"
           matTooltip="Type of FFT averaging">
-          <mat-option *ngFor="let averagingMode of averagingModes" [value]="averagingMode.value">
+          <mat-option *ngFor="let averagingMode of averagingModes" [value]="averagingMode.value" style="font-size: 14px;">
             {{averagingMode.viewValue}}
           </mat-option>
         </mat-select>
       </td>
       <td>
         Avg value
-        <mat-select style="width:7ch; background-color: white; margin: 1px;"
+        <mat-select style="width:7ch; background-color: white; margin: 1px; font-size: 14px;"
           [(value)]="settings.averagingValue"
           (selectionChange)="setAveragingValue()"
           matTooltip="Number of FFTs to average over">
-          <mat-option *ngFor="let averagingValue of averagingValues" [value]="averagingValue.value">
+          <mat-option *ngFor="let averagingValue of averagingValues" [value]="averagingValue.value" style="font-size: 14px;">
             {{averagingValue.viewValue}}
           </mat-option>
         </mat-select>
