@@ -199,4 +199,24 @@ export class SpectrumctlComponent implements OnInit {
       return 'grey';
     }
   }
+
+  getFFTWindowName(): string {
+    const fftWindow = this.fftWindows.find(w => w.value === this.settings.fftWindow);
+    return fftWindow ? fftWindow.viewValue : 'Unknown';
+  }
+
+  getFFTSizeName(): string {
+    const fftSize = this.fftSizes.find(s => s.value === this.settings.fftSize);
+    return fftSize ? fftSize.viewValue : 'Unknown';
+  }
+
+  getAvgeragingModeName(): string {
+    const averagingMode = this.averagingModes.find(m => m.value === this.settings.averagingMode);
+    return averagingMode ? averagingMode.viewValue : 'Unknown';
+  }
+
+  getAveragingValueName(): string {
+    const averagingValue = this.averagingValues.find(v => v.value === this.settings.averagingValue);
+    return averagingValue ? averagingValue.viewValue : 'Unknown';
+  }
 }

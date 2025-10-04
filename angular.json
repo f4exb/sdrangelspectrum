@@ -122,5 +122,8 @@
       }
     }
   },
-  "defaultProject": "sdrangelspectrum"
+  "defaultProject": "sdrangelspectrum",
+  "cli": {
+    "analytics": false
+  }
 }

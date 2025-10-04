@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AppComponent } from './app.component';
 import { WsspectrumComponent } from './wsspectrum/wsspectrum.component';
@@ -26,7 +27,8 @@ import { InstanceSummaryComponent } from './instance-summary/instance-summary.co
     MatTooltipModule,
     MatSelectModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

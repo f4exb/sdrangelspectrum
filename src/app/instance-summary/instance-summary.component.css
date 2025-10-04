@@ -6,13 +6,15 @@
   border-width: 2px;
   margin-bottom: 5px;
   padding: 0.2em 0.2em 0.2em 0.2em;
+  background-color: var(--instance-summary-bg) !important;
 }
 
 .button-card {
-  padding-top: 0px;
-  padding-right: 0px;
-  padding-bottom: 0px;
-  padding-left: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 0;
   width: 22px;
   height: 22px;
 }
@@ -35,4 +37,19 @@
 .top-card {
   border: none;
   padding: 0.2em 0.2em 0.2em 0.2em;
+}
+
+.instance-summary-row {
+  display: flex;
+  align-items: center;
+}
+
+.small-icon {
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+  line-height: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

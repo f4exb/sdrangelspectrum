@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, OnDestroy, AfterViewInit } from '@angular/core';
 import { Spectrum, SPECTRUM_DEFAULT } from '../spectrum';
 import { WebsocketService } from '../websocket.service';
 import { SdrangelUrlService } from '../sdrangel-url.service';
@@ -14,7 +14,7 @@ interface Tick {
   templateUrl: './wsspectrum.component.html',
   styleUrls: ['./wsspectrum.component.css']
 })
-export class WsspectrumComponent implements OnInit {
+export class WsspectrumComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input('width') width: number;
   sdrangelURL: string;
   wsHost = '127.0.0.1';
@@ -62,6 +62,8 @@ export class WsspectrumComponent implements OnInit {
   private ctxWaterfall: CanvasRenderingContext2D;
   private ctxWaterfallGrid: CanvasRenderingContext2D;
   private ctxTimeScale: CanvasRenderingContext2D;
+
+  private themeObserver: MutationObserver;
 
   constructor(private sdrangelUrlService: SdrangelUrlService,
               private wsService: WebsocketService) {
@@ -152,6 +154,28 @@ export class WsspectrumComponent implements OnInit {
     this.ctxWaterfallGrid = this.cwaterfallGrid.nativeElement.getContext('2d');
     this.ctxTimeScale = this.ctimeScale.nativeElement.getContext('2d');
     this.initPowerScale = true;
+  }
+
+  ngAfterViewInit(): void {
+    this.observeThemeChange();
+  }
+
+  ngOnDestroy(): void {
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+    }
+  }
+
+  private observeThemeChange() {
+    this.themeObserver = new MutationObserver(() => {
+      // Call drawPowScale with the current ticks
+      this.drawPowScale(this.powerTicks);
+      this.drawTimeScale(this.timeTicks);
+      this.drawFreqScale(this.frequencyTicks);
+      this.drawSpectrumGrid(this.frequencyTicks, this.powerTicks);
+      this.drawWaterfallGrid(this.frequencyTicks, this.timeTicks);
+    });
+    this.themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   getSpectrumHeight() {
@@ -263,7 +287,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(tick.axisValue, 0);
       ctx.lineTo(tick.axisValue, h);
     });
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-spectrum-grid-color').trim();
     ctx.stroke();
 
     // Redraw power grrid
@@ -272,7 +296,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(0, tick.axisValue);
       ctx.lineTo(w, tick.axisValue);
     });
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-spectrum-grid-color').trim();
     ctx.stroke();
   }
 
@@ -297,7 +321,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(tick.axisValue, 0);
       ctx.lineTo(tick.axisValue, h);
     });
-    ctx.strokeStyle = 'rgba(180, 188, 255, 0.75)';
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-waterfall-grid-color').trim();
     ctx.stroke();
 
     // Redraw time grid
@@ -306,7 +330,7 @@ export class WsspectrumComponent implements OnInit {
       ctx.moveTo(0, tick.axisValue);
       ctx.lineTo(w, tick.axisValue);
     });
-    ctx.strokeStyle = 'rgba(192, 192, 255, 0.75)';
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-waterfall-grid-color').trim();
     ctx.stroke();
   }
 
@@ -319,14 +343,15 @@ export class WsspectrumComponent implements OnInit {
     const w = this.cfreqScale.nativeElement.width;
     const h = this.cfreqScale.nativeElement.height;
 
-    // Clear scale
-    ctx.fillStyle = 'rgba(225, 225, 205,1.0)';
+    // Get the CSS variable value for background
+    const bg = getComputedStyle(document.body).getPropertyValue('--wsspectrum-horizontal-scale-bg').trim();
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
     // Redraw scale text
     ctx.font = '13px Courier';
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-canvas-text-color').trim();
     let scaleFactor = 1;
     let nbDecimals = 3;
     if (ticks.length > 0) {
@@ -396,14 +421,16 @@ export class WsspectrumComponent implements OnInit {
     const w = this.cpowScale.nativeElement.width;
     const h = this.cpowScale.nativeElement.height;
 
-    // Clear scale
-    ctx.fillStyle = 'rgba(245, 245, 225, 1.0)';
+    // Get the CSS variable value for background
+    const bg = getComputedStyle(document.body).getPropertyValue('--wsspectrum-vertical-scale-bg').trim();
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
     // Redraw power scale
+    const textColor = getComputedStyle(document.body).getPropertyValue('--wsspectrum-canvas-text-color').trim();
+    ctx.fillStyle = textColor;
     ctx.font = '13px Courier';
     ctx.textAlign = 'right';
-    ctx.fillStyle = 'black';
 
     ticks.forEach(tick => {
       let label: string;
@@ -425,14 +452,15 @@ export class WsspectrumComponent implements OnInit {
     const w = this.ctimeScale.nativeElement.width;
     const h = this.ctimeScale.nativeElement.height;
 
-    // Clear scale
-    ctx.fillStyle = 'rgba(245, 245, 225, 1.0)';
+    // Get the CSS variable value for background
+    const bg = getComputedStyle(document.body).getPropertyValue('--wsspectrum-vertical-scale-bg').trim();
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
 
     // Redraw time scale
     ctx.font = '13px Courier';
     ctx.textAlign = 'right';
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-canvas-text-color').trim();
 
     ticks.forEach(tick => {
       let label: string;
@@ -479,7 +507,9 @@ export class WsspectrumComponent implements OnInit {
 
     const ctx = this.ctxSpectrum;
     const w = this.cspectrum.nativeElement.width / fftSize;
-    ctx.fillStyle = 'rgba(255, 248, 180, 1.0)';
+    // Get the CSS variable value for background
+    const bg = getComputedStyle(document.body).getPropertyValue('--wsspectrum-canvas-bg').trim();
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, this.cspectrum.nativeElement.width, this.cspectrum.nativeElement.height);
     ctx.beginPath();
 
@@ -495,7 +525,7 @@ export class WsspectrumComponent implements OnInit {
       }
     }
 
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--wsspectrum-canvas-text-color').trim();
     ctx.stroke();
   }
 
@@ -528,6 +558,10 @@ export class WsspectrumComponent implements OnInit {
       const bin = Math.floor(xPos * wx);
       let pow: number = (refLevel - series[bin]) / powerRange; // 0.0 -> 1.0 range high to low
       pow = (pow < 0.0) ? 0.0 : (pow > 1.0) ? 1.0 : pow;
+      const darkMode = document.body.classList.contains('dark-theme');
+      if (darkMode) {
+        pow = 1.0 - pow; // Invert for dark mode
+      }
       imgdata.data[4 * xPos] = this.powToRed(pow);
       imgdata.data[4 * xPos + 1] = this.powToGreen(pow);
       imgdata.data[4 * xPos + 2] = this.powToBlue(pow);

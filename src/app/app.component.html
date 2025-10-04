@@ -5,7 +5,13 @@
     <input type="text" class="input-card" [(ngModel)]="sdrangelURL" name="sdrangelURL" size="40" matTooltip="URL of the instance to connect to">
     &nbsp;
     <button mat-button class="button-card" (click)="validateURL()" matTooltip="(re)connect to URL">
-      <img src="./assets/icons/if_checkmark.svg" style="height:16px; width:16px"/>
+      <mat-icon class="small-icon">check</mat-icon>
+    </button>
+    &nbsp;
+    <button mat-button class="button-card" (click)="toggleDarkTheme()" matTooltip="Toggle dark theme">
+      <mat-icon class="small-icon">
+        {{ isDarkTheme ? 'light_mode' : 'dark_mode' }}
+      </mat-icon>
     </button>
   </span>
 </mat-card>

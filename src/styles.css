@@ -1,8 +1,53 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~font-awesome/css/font-awesome.css';
 
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: var(--background-color);
+  color: var(--text-color);
+}
 
 .mat-tooltip {
     font-size: 12px;
+}
+
+:root {
+  --background-color: #f5f5f5;
+  --text-color: #222;
+  --card-bg: rgb(220,230,255);
+  --version-bg: lightblue;
+  --spectrum-values-bg: #e0e0e0;
+  --spectrum-table-bg: rgb(230, 230, 210);
+  --instance-summary-bg: #e3f2fd;
+  --wsspectrum-vertical-scale-bg: rgb(245, 245, 225);
+  --wsspectrum-horizontal-scale-bg: rgb(220, 220, 200);
+  --wsspectrum-canvas-text-color: black;
+  --wsspectrum-canvas-bg: rgb(240, 240, 200);
+  --wsspectrum-spectrum-grid-color: rgb(200, 200, 200);
+  --wsspectrum-waterfall-grid-color: rgba(180, 188, 255, 0.75);
+  --input-bg: #fff;
+  --input-text: #222;
+  --mat-option-bg: #fff;
+  --mat-option-text: #222;
+}
+
+.dark-theme {
+  --background-color: #181a1b;
+  --text-color: #eee;
+  --card-bg: #23272e;
+  --version-bg: darkblue;
+  --spectrum-values-bg: #303030;
+  --spectrum-table-bg: #454c58;
+  --instance-summary-bg: #23272e;
+  --wsspectrum-vertical-scale-bg: rgb(40, 40, 35);
+  --wsspectrum-horizontal-scale-bg: rgb(60, 60, 55);
+  --wsspectrum-canvas-text-color: white;
+  --wsspectrum-canvas-bg: black;
+  --wsspectrum-spectrum-grid-color: rgb(64, 64, 64);
+  --wsspectrum-waterfall-grid-color: rgba(64, 64, 128, 0.75);
+  --input-bg: #23272e;
+  --input-text: #eee;
+  --mat-option-bg: #23272e;
+  --mat-option-text: #eee;
 }

@@ -8,23 +8,102 @@
   padding: 0.2em 0.2em 0.2em 0.2em;
 }
 
+.spectrum-control-row {
+  display: flex;
+  align-items: center;
+}
+
 .device-number-input {
   width: 4ch;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid #888;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .spec-host {
-  width: 14ch
+  width: 14ch;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid #888;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .spec-port {
-  width: 7ch
+  width: 7ch;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid #888;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 td {
-  background-color: rgb(230, 230, 210);
+  background-color: var(--spectrum-table-bg);
+  padding: 2px 4px;
+  line-height: 1.2;
+  vertical-align: middle;
 }
 
-::ng-deep .mat-card {
-  /* CSS styles go here */
-  padding: 10px; /* for example to remove the margin */
+td mat-select {
+  margin-left: 2px !important; /* Adjust value as needed */
+  padding-left: 2px !important;
+  width: 22px;
+  height: 22px;
+  font-size: 14px !important;
+  background-color: var(--mat-option-bg) !important;
+}
+
+td mat-select-trigger {
+  color: var(--mat-option-text) !important;
+}
+
+td mat-select mat-select-trigger {
+  margin-left: 2px !important; /* Adjust value as needed */
+  padding-left: 2px !important;
+  width: 22px;
+  height: 22px;
+  font-size: 14px !important;
+  background-color: var(--mat-option-bg) !important;
+  color: var(--mat-option-text) !important;
+}
+
+.fft-select {
+  background-color: white;
+  margin: 1px;
+  font-size: 14px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.button-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 0;
+  width: 22px;
+  height: 22px;
+}
+
+.small-icon {
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+  line-height: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type="number"],
+input[type="string"] {
+  height: 22px;
+  font-size: 14px;
+  padding: 0 2px;
+  box-sizing: border-box;
 }

@@ -1,16 +1,30 @@
 .power-input {
-    width: 5ch;
-    margin: 1px;
+    width: 7ch;
     position: relative;
-    bottom: 2px;
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid #888;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
+
 .port-input {
-    width: 7ch
+    width: 7ch;
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid #888;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .uri-input {
-  width: 20ch
+    width: 20ch;
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid #888;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .cspectrum {
@@ -33,6 +47,7 @@
 
 .cpowScale {
     position: absolute;
+    background-color: var(--wsspectrum-vertical-scale-bg);
 }
 
 .cwaterfall {
@@ -47,8 +62,29 @@
 
 .ctimeScale {
     position: absolute;
+    background-color: var(--wsspectrum-vertical-scale-bg);
 }
 
 td {
-    background-color: rgb(230, 230, 210);
+    background-color: var(--spectrum-table-bg);
+}
+
+.button-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 0;
+  width: 22px;
+  height: 22px;
+}
+
+.small-icon {
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+  line-height: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

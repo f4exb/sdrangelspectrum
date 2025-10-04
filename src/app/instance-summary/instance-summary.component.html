@@ -1,7 +1,7 @@
 <mat-card class="instance-summary-card">
-  <span>
+  <span class="instance-summary-row">
     <button mat-button class="button-card" (click)="fetchInstanceSummary()" matTooltip="Refresh">
-      <img src="./assets/icons/if_refresh.svg" style="height:16px; width:16px"/>
+      <mat-icon class="small-icon">refresh</mat-icon>
     </button>&nbsp;
     <span>{{instanceSummary.appname}}</span>&nbsp;
     <span>{{instanceSummary.version}}</span>&nbsp;

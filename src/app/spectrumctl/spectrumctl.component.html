@@ -1,6 +1,6 @@
 <div>
   <table>
-    <tr>
+    <tr class="spectrum-control-row">
       <td>
         Dev
         <input type="number" class="device-number-input"
@@ -12,51 +12,63 @@
       </td>
       <td>
         FFT Window
-        <mat-select style="width:11ch; background-color: white; margin: 1px; font-size: 14px;"
+        <mat-select style="width:11ch;"
           [(value)]="settings.fftWindow"
           (selectionChange)="setFFTWindow()"
           matTooltip="FFT window function">
-          <mat-option *ngFor="let fftWindow of fftWindows" [value]="fftWindow.value" style="font-size: 14px;">
+          <mat-option *ngFor="let fftWindow of fftWindows" [value]="fftWindow.value">
             {{fftWindow.viewValue}}
           </mat-option>
+          <mat-select-trigger>
+            <span>{{ getFFTWindowName() }}</span>
+          </mat-select-trigger>
         </mat-select>
       </td>
       <td>
         FFT Size
-        <mat-select style="width:7ch; background-color: white; margin: 1px; font-size: 14px;"
+        <mat-select style="width:7ch; "
           [(value)]="settings.fftSize"
           (selectionChange)="setFFTSize()"
           matTooltip="FFT size">
-          <mat-option *ngFor="let fftSize of fftSizes" [value]="fftSize.value" style="font-size: 14px;">
+          <mat-option *ngFor="let fftSize of fftSizes" [value]="fftSize.value">
             {{fftSize.viewValue}}
           </mat-option>
+          <mat-select-trigger>
+            <span>{{ getFFTSizeName() }}</span>
+          </mat-select-trigger>
         </mat-select>
       </td>
       <td>
         Avg mode
-        <mat-select style="width:10ch; background-color: white; margin: 1px; font-size: 14px;"
+        <mat-select style="width:10ch; "
           [(value)]="settings.averagingMode"
           (selectionChange)="setAveragingMode()"
           matTooltip="Type of FFT averaging">
-          <mat-option *ngFor="let averagingMode of averagingModes" [value]="averagingMode.value" style="font-size: 14px;">
+          <mat-option *ngFor="let averagingMode of averagingModes" [value]="averagingMode.value">
             {{averagingMode.viewValue}}
           </mat-option>
+          <mat-select-trigger>
+            <span>{{ getAvgeragingModeName() }}</span>
+          </mat-select-trigger>
         </mat-select>
       </td>
       <td>
         Avg value
-        <mat-select style="width:7ch; background-color: white; margin: 1px; font-size: 14px;"
+        <mat-select style="width:7ch; "
           [(value)]="settings.averagingValue"
           (selectionChange)="setAveragingValue()"
           matTooltip="Number of FFTs to average over">
-          <mat-option *ngFor="let averagingValue of averagingValues" [value]="averagingValue.value" style="font-size: 14px;">
+          <mat-option *ngFor="let averagingValue of averagingValues" [value]="averagingValue.value">
             {{averagingValue.viewValue}}
           </mat-option>
+          <mat-select-trigger>
+            <span>{{ getAveragingValueName() }}</span>
+          </mat-select-trigger>
         </mat-select>
       </td>
       <td>
         <button mat-button class="button-card" (click)="onDeviceIndexChanged()" matTooltip="Refresh">
-          <img src="./assets/icons/if_refresh.svg" style="height:16px; width:16px"/>
+          <mat-icon class="small-icon">refresh</mat-icon>
         </button>
       </td>
       <td>
@@ -78,12 +90,12 @@
       </td>
       <td>
         <button mat-button class="button-card button-margin"  (click)="startServer()" matTooltip="Start server">
-          <img src="./assets/icons/play-outline.svg" style="height:14px; width:14px; padding-top: 2px"/>
+          <mat-icon class="small-icon">play_arrow</mat-icon>
         </button>
       </td>
       <td>
-        <button mat-button class="button-card button-margin" (click)="stopServer()"  matTooltip="Stop server">
-          <img src="./assets/icons/stop-outline.svg" style="height:12px; width:12px; padding-top: 3px"/>
+        <button mat-button class="button-card button-margin" (click)="stopServer()" matTooltip="Stop server">
+          <mat-icon class="small-icon">stop</mat-icon>
         </button>
       </td>
       <td>
