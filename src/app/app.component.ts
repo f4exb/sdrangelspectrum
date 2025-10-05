@@ -11,7 +11,7 @@ let isDarkTheme = false; // Global variable to track dark theme state
 })
 export class AppComponent {
   title = 'SDRangelSpectrum';
-  version = '2.0.0';
+  version = '2.1.0';
   sdrangelURL = 'http://127.0.0.1:8091/sdrangel'; // the default URL
 
   get isDarkTheme() {
